@@ -371,22 +371,13 @@ location = pyautogui.locateCenterOnScreen(image_path, confidence=0.9)
 
 ### Reconfiguration not working
 
-- \*\*Set1 (Current)
-
-- ✨ **NEW**: Configuration persistence - all settings preserved during reconfiguration
-- ✨ **NEW**: Adaptive value dropdowns - options automatically update based on selected stat
-- ✨ **NEW**: GUI-based confirmations - all prompts appear in app window (no terminal)
-- ✨ **NEW**: Immediate dropdown updates when changing stats during reconfiguration
-- ✨ **NEW**: Smart value preservation - keeps valid values when switching stats
-- ✨ **NEW**: Enhanced reconfiguration logic with proper state management
-- 🔧 **IMPROVED**: Window close handler for clean process termination
-- 🔧 **IMPROVED**: Better feedback with region dimensions display
-- 🔧 **IMPROVED**: Clearer activity log messages with color-coded emojis
-
-### v2.0\*\* Always use "⚙️ Reconfigure" button, not window close
-
+- **Settings lost:** Always use "⚙️ Reconfigure" button, not window close
 - **Previous values not shown:** Ensure configuration was started successfully before
-- **Value dropdown stuck:** Change stat to "(None)" and back to reset dropdown stateutton screenshot
+- **Value dropdown stuck:** Change stat to "(None)" and back to reset dropdown state
+
+### Button not being found
+
+- Update `button_image.png` with current button screenshot
 - Ensure game window is active and visible
 - Check button confidence threshold
 
@@ -398,8 +389,17 @@ location = pyautogui.locateCenterOnScreen(image_path, confidence=0.9)
 
 ## 📝 Changelog
 
-### v2.0 (Current)
+### v1.0.0 (Current)
 
+- ✨ **NEW**: Configuration persistence - all settings preserved during reconfiguration
+- ✨ **NEW**: Adaptive value dropdowns - options automatically update based on selected stat
+- ✨ **NEW**: GUI-based confirmations - all prompts appear in app window (no terminal)
+- ✨ **NEW**: Immediate dropdown updates when changing stats during reconfiguration
+- ✨ **NEW**: Smart value preservation - keeps valid values when switching stats
+- ✨ **NEW**: Enhanced reconfiguration logic with proper state management
+- 🔧 **IMPROVED**: Window close handler for clean process termination
+- 🔧 **IMPROVED**: Better feedback with region dimensions display
+- 🔧 **IMPROVED**: Clearer activity log messages with color-coded emojis
 - ✨ Complete UI overhaul with CustomTkinter
 - ✂️ Visual region selection with snipping tool
 - 📊 Dual stat support with dropdown selectors
@@ -408,13 +408,6 @@ location = pyautogui.locateCenterOnScreen(image_path, confidence=0.9)
 - 🎨 Modern dark theme interface
 - 📈 Improved OCR accuracy (simpler preprocessing)
 - 🛑 Proper process termination on window close
-
-### v1.0 (Legacy)
-
-- 🎯 Basic OCR stat detection
-- ⌨️ Text input for stats and coordinates
-- 🔄 Automatic rerolling
-- 📝 Console-based logging
 
 ## 📄 License
 
