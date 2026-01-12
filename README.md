@@ -8,10 +8,15 @@ An automated Blessing of the Demon (BoD) and Blessing of the Goddess (BoG) rerol
 - 🔄 **Smart Rerolling** - Automatically clicks the reroll button until target stats are met
 - 📊 **Dual Stat Support** - Configure one or two target stats with minimum values
 - ➕ **Stat Summing** - When only one stat is configured, values from both panels are summed
+- 🎚️ **Adaptive Value Dropdowns** - Value options automatically update based on selected stat
+- 💾 **Configuration Persistence** - All settings preserved when reconfiguring (coordinates, stats, values)
 - ✂️ **Visual Region Selection** - Snipping tool interface for easy dialog region selection
 - 🎨 **Modern GUI** - Clean, intuitive interface built with CustomTkinter
-- 🔍 **Real-time Logging** - Monitor OCR detection and automation status
+- 🪟 **GUI-Based Interactions** - All prompts and confirmations appear in the app (no terminal required)
+- 🔍 **Real-time Logging** - Monitor OCR detection and automation status with timestamped logs
 - ⚙️ **Reconfigurable** - Change settings without restarting the application
+- 🎭 **Theme Support** - Switch between Light, Dark, and System themes
+- 🛑 **Clean Termination** - Properly stops automation when closing the window
 
 ## 📋 Requirements
 
@@ -49,29 +54,46 @@ An automated Blessing of the Demon (BoD) and Blessing of the Goddess (BoG) rerol
 
    **STEP 2: Configure Target Stats**
 
-   - **Stat 1 (Optional):** Select your primary stat and minimum value
+   - **Stat 1 (Optional):** Select your primary stat from dropdown
+     - Value dropdown automatically shows valid options for that stat (e.g., STR: 0-5)
+     - Select your minimum target value
    - **Stat 2 (Optional):** Select your secondary stat and minimum value
+     - Each stat has predefined value ranges based on game mechanics
    - Configure at least one stat
+   - START AUTOMATION button becomes enabled when all requirements are met
 
    **Stat Behavior:**
 
    - If only ONE stat configured → Values from BOTH panels are SUMMED
    - If BOTH stats configured → Each checked INDIVIDUALLY
    - Stats can appear in either Stat 1 or Stat 2 panel of the dialog
+   - When switching stats during reconfiguration → value dropdown updates immediately
 
 4. **Start automation**
+   (template matching at 0.9 confidence) - Click it when found - Read stats using OCR (3x upscaling with binary threshold preprocessing) - Check if targets are met - Automatically reroll if targets not achieved
 
-   - Click "🚀 START AUTOMATION"
-   - The automation window opens with activity log
-   - Click "▶️ START AUTOMATION" button to begin
-   - The bot will continuously:
-     - Search for the reroll button
-     - Click it when found
-     - Read stats using OCR
-     - Check if targets are met
-     - Stop and notify when targets achieved
+   - Window stays on top while automation is running
 
 5. **When targets are met**
+
+   - A GUI dialog appears in the app window: "🎉 Target Stats Found!"
+   - "Do you want to continue re-awakening?"
+   - Click "Yes" to continue rerolling
+   - Click "No" to stop automation
+   - No terminal interaction required - everything is in the app
+
+6. **Reconfiguration**
+   - Click "⚙️ Reconfigure" button in the automation window
+   - Configuration window opens with ALL previous settings preserved:
+     - Region coordinates restored
+     - Previously selected stats shown
+     - Target values maintained
+   - Make any changes:
+     - Switch to different stat → value dropdown updates immediately
+     - Adjust target values
+     - Reselect region if needed
+   - Click "🚀 START AUTOMATION" to resume with updated settings
+7. **When targets are met**
    - Automation pauses
    - Console prompts: `Do you want to re-awake? (y/n):`
    - Type `y` to continue rerolling
@@ -89,19 +111,27 @@ Check `stats.txt` file for the complete list. Common stats include:
 
 ### Tips for Best Results
 
-1. **Region Selection**
+1. \*\*Region Sutomatically filtered based on selected stat type
 
+   - Single stat mode is useful for maximizing one attribute
+   - Value dropdowns adapt immediately when changing stats
+
+2. **Reconfiguration**
+
+   - All settings are preserved when you click "⚙️ Reconfigure"
+   - Only change what you need - everything else stays the same
+   - Value dropdown automatically updates when switching stats
    - Ensure the entire dialog is captured including borders
    - Don't make the region too large (avoid background elements)
    - Keep the game window in the same position during automation
 
-2. **OCR Accuracy**
+3. **OCR Accuracy**
 
    - Use clear, high-contrast game settings
    - Ensure the dialog is fully visible and not obscured
    - Avoid transparent or overlapping windows
 
-3. **Stat Configuration**
+4. **Stat Configuration**
    - Stat names must exactly match those in `stats.txt`
    - Values are based on game mechanics (see stat value ranges)
    - Single stat mode is useful for maximizing one attribute
@@ -305,6 +335,8 @@ location = pyautogui.locateCenterOnScreen(image_path, confidence=0.9)
    - OCR detected text
    - Regex matches
    - Stat comparisons
+   - **Value dropdown empty:** Ensure stat exists in `stat_values` dictionary
+   - **Settings not preserved during reconfiguration:** Use "⚙️ Reconfigure" button, not window close
    - Error messages
 
 3. **Common Issues**
@@ -329,7 +361,32 @@ location = pyautogui.locateCenterOnScreen(image_path, confidence=0.9)
 
 ### Button not being found
 
-- Update `button_image.png` with current button screenshot
+- Update `button_image.png` with current b
+
+### Value dropdown issues
+
+- **Empty after stat selection:** Try selecting "(None)" then reselecting your stat
+- **Wrong values shown:** Each stat has predefined ranges in `stat_values` dictionary
+- **Not updating when changing stat:** This should happen automatically - check console for errors
+
+### Reconfiguration not working
+
+- \*\*Set1 (Current)
+
+- ✨ **NEW**: Configuration persistence - all settings preserved during reconfiguration
+- ✨ **NEW**: Adaptive value dropdowns - options automatically update based on selected stat
+- ✨ **NEW**: GUI-based confirmations - all prompts appear in app window (no terminal)
+- ✨ **NEW**: Immediate dropdown updates when changing stats during reconfiguration
+- ✨ **NEW**: Smart value preservation - keeps valid values when switching stats
+- ✨ **NEW**: Enhanced reconfiguration logic with proper state management
+- 🔧 **IMPROVED**: Window close handler for clean process termination
+- 🔧 **IMPROVED**: Better feedback with region dimensions display
+- 🔧 **IMPROVED**: Clearer activity log messages with color-coded emojis
+
+### v2.0\*\* Always use "⚙️ Reconfigure" button, not window close
+
+- **Previous values not shown:** Ensure configuration was started successfully before
+- **Value dropdown stuck:** Change stat to "(None)" and back to reset dropdown stateutton screenshot
 - Ensure game window is active and visible
 - Check button confidence threshold
 
