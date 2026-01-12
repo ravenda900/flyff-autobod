@@ -2,7 +2,23 @@
 
 ## 🎉 Initial Release
 
-Welcome to the first official release of **BoD/BoG Auto Reroll**! This tool automates the stat rerolling process for Blessing of Dekane (BoD) and Blessing of Goddess (BoG) in Flyff Universe.
+Welcome to the first official release of **BoD/BoG Auto-Reroll Tool**! This tool automates the stat rerolling process for Blessing of the Demon (BoD) and Blessing of the Goddess (BoG) in Flyff Universe.
+
+## 🐛 Bug Fixes
+
+### Word Boundary Matching for Stat Detection
+
+- **Fixed stat name conflicts**: Speed no longer matches AttackSpeed or CastingSpeed
+- **Implemented regex word boundaries**: Uses `\b` to ensure exact stat matches only
+- **Prevents false positives**: Each stat is matched independently without substring conflicts
+
+### Improved UI Titles
+
+- **More intuitive window titles**:
+  - Configuration: "BoD/BoG Auto-Reroll Tool - Setup - v1.0.0"
+  - Running: "BoD/BoG Auto-Reroll Tool - Active - v1.0.0"
+- **Version display**: Version number now shown in all window titles
+- **Clear state indication**: Users can immediately see if they're in Setup or Active mode
 
 ## ✨ Key Features
 

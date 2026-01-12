@@ -1,10 +1,10 @@
-# ⚡ BoD/BoG Auto Reroll
+# ⚡ BoD/BoG Auto-Reroll Tool
 
 An automated Blessing of the Demon (BoD) and Blessing of the Goddess (BoG) reroll tool for Flyff Universe. This application automatically detects stats using OCR (Optical Character Recognition) and rerolls your item until target stats are achieved.
 
 ## ✨ Features
 
-- 🎯 **Automatic Stat Detection** - Uses OCR to read stats from the blessing dialog
+- 🎯 **Accurate Stat Detection** - Uses OCR with word boundary matching to prevent stat conflicts (e.g., Speed vs AttackSpeed)
 - 🔄 **Smart Rerolling** - Automatically clicks the reroll button until target stats are met
 - 📊 **Dual Stat Support** - Configure one or two target stats with minimum values
 - ➕ **Stat Summing** - When only one stat is configured, values from both panels are summed
@@ -17,6 +17,7 @@ An automated Blessing of the Demon (BoD) and Blessing of the Goddess (BoG) rerol
 - ⚙️ **Reconfigurable** - Change settings without restarting the application
 - 🎭 **Theme Support** - Switch between Light, Dark, and System themes
 - 🛑 **Clean Termination** - Properly stops automation when closing the window
+- 📌 **Version Display** - Version number shown in window titles for easy tracking
 
 ## 📋 Requirements
 
