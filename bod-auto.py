@@ -114,7 +114,7 @@ def select_region_with_snipping_tool():
 
 # --- Enhanced UI for user input ---
 class ConfigUI:
-    def __init__(self):
+    def __init__(self, initial_stat1=None, initial_value1=None, initial_stat2=None, initial_value2=None, initial_region=None):
         ctk.set_appearance_mode("dark")  # Default to dark mode
         ctk.set_default_color_theme("blue")
         self.root = ctk.CTk()
@@ -124,6 +124,13 @@ class ConfigUI:
         self.root.resizable(True, True)
         
         self.current_theme = "dark"  # Track current theme
+        
+        # Store initial values for reconfiguration
+        self.initial_stat1 = initial_stat1
+        self.initial_value1 = initial_value1
+        self.initial_stat2 = initial_stat2
+        self.initial_value2 = initial_value2
+        self.initial_region = initial_region
         
         # Stat possible values mapping based on game data
         self.stat_values = {
@@ -293,7 +300,7 @@ class ConfigUI:
                                              values=['(None)'] + self.available_stats,
                                              state="readonly",
                                              width=200,
-                                             command=lambda e: self.update_stat1_values())
+                                             command=self.on_stat1_change)
         self.stat1_dropdown.pack(side="left", padx=(0, 10))
         self.stat1_dropdown.set('(None)')
         
@@ -302,8 +309,9 @@ class ConfigUI:
         self.value1_var = tk.StringVar()
         self.value1_dropdown = ctk.CTkComboBox(stat1_input,
                                               variable=self.value1_var,
-                                              state="readonly",
-                                              width=100)
+                                              state="disabled",
+                                              width=100,
+                                              values=[''])
         self.value1_dropdown.pack(side="left")
         self.update_stat1_values()
         
@@ -325,7 +333,7 @@ class ConfigUI:
                                              values=['(None)'] + self.available_stats,
                                              state="readonly",
                                              width=200,
-                                             command=lambda e: self.update_stat2_values())
+                                             command=self.on_stat2_change)
         self.stat2_dropdown.pack(side="left", padx=(0, 10))
         self.stat2_dropdown.set('(None)')
         
@@ -334,10 +342,14 @@ class ConfigUI:
         self.value2_var = tk.StringVar()
         self.value2_dropdown = ctk.CTkComboBox(stat2_input,
                                               variable=self.value2_var,
-                                              state="readonly",
-                                              width=100)
+                                              state="disabled",
+                                              width=100,
+                                              values=[''])
         self.value2_dropdown.pack(side="left")
         self.update_stat2_values()
+        
+        # Apply initial values if provided (for reconfiguration)
+        self.apply_initial_values()
         
         # Info label
         info_frame = ctk.CTkFrame(stats_card, fg_color="transparent")
@@ -362,6 +374,62 @@ class ConfigUI:
                                      font=("Segoe UI", 14, "bold"),
                                      state="disabled")
         self.start_btn.pack(pady=(20, 0), fill="x")
+    
+    def apply_initial_values(self):
+        """Apply initial values if provided (for reconfiguration)"""
+        # Restore region coordinates
+        if self.initial_region:
+            self.region = self.initial_region
+            self.region_entry.delete(0, tk.END)
+            self.region_entry.insert(0, f"{self.initial_region[0]},{self.initial_region[1]},{self.initial_region[2]},{self.initial_region[3]}")
+            width = self.initial_region[2] - self.initial_region[0]
+            height = self.initial_region[3] - self.initial_region[1]
+            self.region_status.configure(text=f"✓ Region selected: {width}x{height} pixels", text_color="#238636")
+        
+        # Restore Stat 1 and its value
+        if self.initial_stat1:
+            # Set stat dropdown
+            self.stat1_var.set(self.initial_stat1)
+            self.stat1_dropdown.set(self.initial_stat1)
+            
+            # Update value dropdown options for this stat
+            self.update_stat1_values()
+            
+            # Now set the value if provided
+            if self.initial_value1 is not None:
+                # Format value consistently
+                if self.initial_value1 == int(self.initial_value1):
+                    value_str = str(int(self.initial_value1))
+                else:
+                    value_str = str(self.initial_value1)
+                
+                # Set the value
+                self.value1_var.set(value_str)
+                self.value1_dropdown.set(value_str)
+        
+        # Restore Stat 2 and its value
+        if self.initial_stat2:
+            # Set stat dropdown
+            self.stat2_var.set(self.initial_stat2)
+            self.stat2_dropdown.set(self.initial_stat2)
+            
+            # Update value dropdown options for this stat
+            self.update_stat2_values()
+            
+            # Now set the value if provided
+            if self.initial_value2 is not None:
+                # Format value consistently
+                if self.initial_value2 == int(self.initial_value2):
+                    value_str = str(int(self.initial_value2))
+                else:
+                    value_str = str(self.initial_value2)
+                
+                # Set the value
+                self.value2_var.set(value_str)
+                self.value2_dropdown.set(value_str)
+        
+        # Update start button state
+        self.update_start_button()
     
     def change_theme(self, choice):
         """Change the application theme"""
@@ -426,46 +494,102 @@ class ConfigUI:
     def remove_stat(self):
         pass  # No longer needed
     
+    def on_stat1_change(self, choice):
+        """Handle Stat 1 dropdown change - updates value dropdown immediately"""
+        # Explicitly update the variable
+        self.stat1_var.set(choice)
+        # Force widget to update
+        self.stat1_dropdown.set(choice)
+        # Update value dropdown based on new stat
+        self.update_stat1_values()
+    
+    def on_stat2_change(self, choice):
+        """Handle Stat 2 dropdown change - updates value dropdown immediately"""
+        # Explicitly update the variable
+        self.stat2_var.set(choice)
+        # Force widget to update
+        self.stat2_dropdown.set(choice)
+        # Update value dropdown based on new stat
+        self.update_stat2_values()
+    
     def update_stat1_values(self):
         """Update value dropdown for Stat 1 based on selected stat"""
         stat = self.stat1_var.get()
+        current_value = self.value1_var.get()
+        
         if stat == '(None)' or not stat:
+            # No stat selected - disable value dropdown
             self.value1_dropdown.configure(values=[''])
-            self.value1_var.set('')
             self.value1_dropdown.configure(state='disabled')
+            self.value1_var.set('')
+            self.value1_dropdown.set('')
         elif stat in self.stat_values:
-            self.value1_dropdown.configure(state='readonly')
+            # Valid stat - populate value dropdown
             values = self.stat_values[stat]
             formatted_values = [str(int(v)) if v == int(v) else str(v) for v in values]
+            
+            # Update dropdown options
             self.value1_dropdown.configure(values=formatted_values)
-            if formatted_values:
-                self.value1_dropdown.set(formatted_values[0])
+            self.value1_dropdown.configure(state='readonly')
+            
+            # Set value: preserve if valid, otherwise use first option
+            if current_value and current_value in formatted_values:
+                # Preserve valid value
+                self.value1_var.set(current_value)
+                self.value1_dropdown.set(current_value)
+            else:
+                # Set to first valid value
+                if formatted_values:
+                    self.value1_var.set(formatted_values[0])
+                    self.value1_dropdown.set(formatted_values[0])
         else:
-            # Stat selected but not in stat_values - disable dropdown
+            # Unknown stat - disable dropdown
             self.value1_dropdown.configure(values=[''])
-            self.value1_var.set('')
             self.value1_dropdown.configure(state='disabled')
+            self.value1_var.set('')
+            self.value1_dropdown.set('')
+        
+        # Update start button state
         self.update_start_button()
     
     def update_stat2_values(self):
         """Update value dropdown for Stat 2 based on selected stat"""
         stat = self.stat2_var.get()
+        current_value = self.value2_var.get()
+        
         if stat == '(None)' or not stat:
+            # No stat selected - disable value dropdown
             self.value2_dropdown.configure(values=[''])
-            self.value2_var.set('')
             self.value2_dropdown.configure(state='disabled')
+            self.value2_var.set('')
+            self.value2_dropdown.set('')
         elif stat in self.stat_values:
-            self.value2_dropdown.configure(state='readonly')
+            # Valid stat - populate value dropdown
             values = self.stat_values[stat]
             formatted_values = [str(int(v)) if v == int(v) else str(v) for v in values]
+            
+            # Update dropdown options
             self.value2_dropdown.configure(values=formatted_values)
-            if formatted_values:
-                self.value2_dropdown.set(formatted_values[0])
+            self.value2_dropdown.configure(state='readonly')
+            
+            # Set value: preserve if valid, otherwise use first option
+            if current_value and current_value in formatted_values:
+                # Preserve valid value
+                self.value2_var.set(current_value)
+                self.value2_dropdown.set(current_value)
+            else:
+                # Set to first valid value
+                if formatted_values:
+                    self.value2_var.set(formatted_values[0])
+                    self.value2_dropdown.set(formatted_values[0])
         else:
-            # Stat selected but not in stat_values - disable dropdown
+            # Unknown stat - disable dropdown
             self.value2_dropdown.configure(values=[''])
-            self.value2_var.set('')
             self.value2_dropdown.configure(state='disabled')
+            self.value2_var.set('')
+            self.value2_dropdown.set('')
+        
+        # Update start button state
         self.update_start_button()
     
     def update_value_dropdown(self):
@@ -870,15 +994,23 @@ def click_image(image_path):
             print("Checking awakes...")
             if capture_and_check():
                 print("AWAKE FOUND!!!")
-                status_window.set_status("⏸️ Waiting for user input...", "#e3b341")
-                choice = input("Do you want to re-awake? (y/n): ").strip().lower()
-                if choice == "n":
-                    status_window.log("🛑 User chose to stop")
+                status_window.set_status("🎉 Target found! Awaiting decision...", "#238636")
+                
+                # Show dialog in the app instead of terminal
+                status_window.root.attributes("-topmost", True)  # Bring window to front
+                result = messagebox.askyesno(
+                    "🎉 Target Stats Found!",
+                    "Your target stats have been achieved!\n\nDo you want to continue re-awakening?",
+                    parent=status_window.root
+                )
+                
+                if not result:  # User clicked "No"
+                    status_window.log("🛑 User chose to stop automation")
                     status_window.stop()
-                    print("Exiting...")
+                    print("User stopped automation")
                     return False  # Signal to stop checking
-                else:
-                    status_window.log("🔄 Re-awakening...")
+                else:  # User clicked "Yes"
+                    status_window.log("🔄 Continuing re-awakening...")
                     status_window.set_status("🔄 Re-awakening...", "#58a6ff")
                     pyautogui.click(location)
                     return True
@@ -936,14 +1068,20 @@ def main():
             break
 
 # Main loop to allow reconfiguration
+# Initialize with no previous config
+prev_stat1, prev_value1, prev_stat2, prev_value2, prev_region = None, None, None, None, None
+
 while True:
-    # Create and run UI
-    ui = ConfigUI()
+    # Create and run UI with previous configuration (if reconfiguring)
+    ui = ConfigUI(prev_stat1, prev_value1, prev_stat2, prev_value2, prev_region)
     stat1_name, target_value1, stat2_name, target_value2, region = ui.run()
     
     # At least one stat and region must be configured
     if not region or (not stat1_name and not stat2_name):
         sys.exit()
+    
+    # Store current configuration for potential reconfiguration
+    prev_stat1, prev_value1, prev_stat2, prev_value2, prev_region = stat1_name, target_value1, stat2_name, target_value2, region
     
     # Create status window
     status_window = StatusWindow(stat1_name, target_value1, stat2_name, target_value2)
