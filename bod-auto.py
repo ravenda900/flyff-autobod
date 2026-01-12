@@ -10,6 +10,9 @@ import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import customtkinter as ctk
 
+# Version
+VERSION = "v1.0.0"
+
 # OPTIONAL: Set tesseract path if not in environment
 # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
@@ -119,7 +122,7 @@ class ConfigUI:
         ctk.set_default_color_theme("blue")
         self.root = ctk.CTk()
         
-        self.root.title("⚡ BoD/BoG Auto Configuration")
+        self.root.title(f"BoD/BoG Auto-Reroll Tool - Setup - {VERSION}")
         self.root.geometry("650x900")
         self.root.resizable(True, True)
         
@@ -661,7 +664,7 @@ class ConfigUI:
 class StatusWindow:
     def __init__(self, stat1_name, target_value1, stat2_name, target_value2):
         self.root = ctk.CTk()
-        self.root.title("⚡ BoD/BoG Auto - Running")
+        self.root.title(f"BoD/BoG Auto-Reroll Tool - Active - {VERSION}")
         self.root.geometry("850x800")
         self.root.resizable(True, True)
         
@@ -858,14 +861,15 @@ def capture_and_check():
     # Create pattern for the configured stat(s)
     patterns = []
     if stat1_name:
-        patterns.append(re.escape(stat1_name))
+        patterns.append(stat1_name)
     if stat2_name:
-        patterns.append(re.escape(stat2_name))
+        patterns.append(stat2_name)
     
     if not patterns:
         return False
         
-    stat_pattern = "|".join(patterns)
+    # Use word boundaries to avoid partial matches (e.g., Speed matching in AttackSpeed)
+    stat_pattern = "|".join([rf"\b{re.escape(s)}\b" for s in patterns])
 
     # Regex: match any stat, followed by + or #, then a number (int/decimal), optional %
     pattern = re.compile(rf"({stat_pattern})[+#](\d+(?:\.\d+)?)(%?)", re.IGNORECASE)
