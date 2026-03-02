@@ -2,6 +2,10 @@
 
 An automated Blessing of the Demon (BoD) and Blessing of the Goddess (BoG) reroll tool for Flyff Universe. This application automatically detects stats using OCR (Optical Character Recognition) and rerolls your item until target stats are achieved.
 
+## 🖼️ Screenshot
+
+![BoD/BoG Auto-Reroll Tool Screenshot](assets/tool-screenshot.png)
+
 ## ✨ Features
 
 - 🎯 **Accurate Stat Detection** - Uses OCR with word boundary matching to prevent stat conflicts (e.g., Speed vs AttackSpeed)
@@ -31,19 +35,16 @@ An automated Blessing of the Demon (BoD) and Blessing of the Goddess (BoG) rerol
 ### Quick Start
 
 1. **Download the release**
-
    - Get the latest `bod-auto.exe` from the releases page
    - Extract to a folder (includes `tesseract` folder and `stats.txt`)
 
 2. **Launch the application**
-
    - Run `bod-auto.exe`
    - The configuration window will appear
 
 3. **Configure your settings**
 
    **STEP 1: Select Dialog Region**
-
    - Open Flyff Universe and display the BoD/BoG blessing dialog
    - Click "✂️ SELECT DIALOG REGION" button
    - The screen will overlay with a gray transparent layer
@@ -54,7 +55,6 @@ An automated Blessing of the Demon (BoD) and Blessing of the Goddess (BoG) rerol
    **Alternative:** Manually enter coordinates in format `left,top,right,bottom` (e.g., `813,153,1339,494`)
 
    **STEP 2: Configure Target Stats**
-
    - **Stat 1 (Optional):** Select your primary stat from dropdown
      - Value dropdown automatically shows valid options for that stat (e.g., STR: 0-5)
      - Select your minimum target value
@@ -64,7 +64,6 @@ An automated Blessing of the Demon (BoD) and Blessing of the Goddess (BoG) rerol
    - START AUTOMATION button becomes enabled when all requirements are met
 
    **Stat Behavior:**
-
    - If only ONE stat configured → Values from BOTH panels are SUMMED
    - If BOTH stats configured → Each checked INDIVIDUALLY
    - Stats can appear in either Stat 1 or Stat 2 panel of the dialog
@@ -72,11 +71,9 @@ An automated Blessing of the Demon (BoD) and Blessing of the Goddess (BoG) rerol
 
 4. **Start automation**
    (template matching at 0.9 confidence) - Click it when found - Read stats using OCR (3x upscaling with binary threshold preprocessing) - Check if targets are met - Automatically reroll if targets not achieved
-
    - Window stays on top while automation is running
 
 5. **When targets are met**
-
    - A GUI dialog appears in the app window: "🎉 Target Stats Found!"
    - "Do you want to continue re-awakening?"
    - Click "Yes" to continue rerolling
@@ -113,12 +110,10 @@ Check `stats.txt` file for the complete list. Common stats include:
 ### Tips for Best Results
 
 1. \*\*Region Sutomatically filtered based on selected stat type
-
    - Single stat mode is useful for maximizing one attribute
    - Value dropdowns adapt immediately when changing stats
 
 2. **Reconfiguration**
-
    - All settings are preserved when you click "⚙️ Reconfigure"
    - Only change what you need - everything else stays the same
    - Value dropdown automatically updates when switching stats
@@ -127,7 +122,6 @@ Check `stats.txt` file for the complete list. Common stats include:
    - Keep the game window in the same position during automation
 
 3. **OCR Accuracy**
-
    - Use clear, high-contrast game settings
    - Ensure the dialog is fully visible and not obscured
    - Avoid transparent or overlapping windows
@@ -184,6 +178,8 @@ autobod/
 ├── requirements.txt     # Python dependencies
 ├── stats.txt           # Available stats list
 ├── button_image.png    # Reference button image
+├── assets/
+│   └── tool-screenshot.png  # UI screenshot used in README
 ├── README.md           # This file
 ├── tesseract/          # Tesseract OCR installation
 │   ├── tesseract.exe
@@ -247,21 +243,18 @@ Rules:
 **Main Components:**
 
 1. **ConfigUI Class** - Configuration window
-
    - Region selection (snipping tool)
    - Stat dropdown selectors
    - Target value configuration
    - Theme switcher
 
 2. **StatusWindow Class** - Automation window
-
    - Real-time activity logging
    - Start/Stop controls
    - Reconfiguration option
    - Status indicators
 
 3. **capture_and_check()** - OCR detection
-
    - Screenshots the selected region
    - Preprocesses image (grayscale, threshold, resize)
    - Runs Tesseract OCR
@@ -327,12 +320,10 @@ location = pyautogui.locateCenterOnScreen(image_path, confidence=0.9)
 ### Debugging
 
 1. **Enable OCR output visualization**
-
    - Uncomment debug lines in `capture_and_check()`
    - Saves preprocessed images to disk
 
 2. **Check console output**
-
    - OCR detected text
    - Regex matches
    - Stat comparisons
