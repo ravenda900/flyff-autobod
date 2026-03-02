@@ -381,7 +381,15 @@ location = pyautogui.locateCenterOnScreen(image_path, confidence=0.9)
 
 ## 📝 Changelog
 
-### v1.0.0 (Current)
+### v1.1.0 (Current)
+
+- 🐛 **FIXED**: Exact stat matching now prevents `Speed` from matching `AttackSpeed` and `CastingSpeed`
+- 🎨 **IMPROVED**: Setup window now keeps `START AUTOMATION` visible on smaller screens with a sticky footer button
+- 📜 **IMPROVED**: Added vertical scrolling to setup body for small-screen usability
+- 🖼️ **DOCS**: Added tool screenshot to README
+- ⚖️ **DOCS**: Added MIT license file and linked it in README
+
+### v1.0.0
 
 - ✨ **NEW**: Configuration persistence - all settings preserved during reconfiguration
 - ✨ **NEW**: Adaptive value dropdowns - options automatically update based on selected stat

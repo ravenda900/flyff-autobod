@@ -11,7 +11,7 @@ from tkinter import messagebox, scrolledtext
 import customtkinter as ctk
 
 # Version
-VERSION = "v1.0.0"
+VERSION = "v1.1.0"
 
 # OPTIONAL: Set tesseract path if not in environment
 # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
