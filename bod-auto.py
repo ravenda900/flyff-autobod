@@ -206,10 +206,14 @@ class ConfigUI:
     def create_widgets(self):
         # Main container
         main_frame = ctk.CTkFrame(self.root, fg_color="transparent")
-        main_frame.pack(fill="both", expand=True, padx=25, pady=25)
-        
+        main_frame.pack(fill="both", expand=True)
+
+        # Scrollable body (adds vertical scrollbar automatically when needed)
+        body_frame = ctk.CTkScrollableFrame(main_frame, fg_color="transparent")
+        body_frame.pack(fill="both", expand=True, padx=25, pady=(25, 15))
+
         # Header with theme switcher
-        header_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
+        header_frame = ctk.CTkFrame(body_frame, fg_color="transparent")
         header_frame.pack(fill="x", pady=(0, 20))
         
         # Title section
@@ -242,7 +246,7 @@ class ConfigUI:
         theme_menu.pack(side="left")
         
         # Window Detection Card
-        window_card = self.create_card_frame(main_frame, "📍 Select Dialog Region")
+        window_card = self.create_card_frame(body_frame, "📍 Select Dialog Region")
         
         info_label = ctk.CTkLabel(window_card, 
                                  text="✂️ Select the BoD/BoG dialog region using the selection tool",
@@ -286,7 +290,7 @@ class ConfigUI:
         self.region_entry.bind('<KeyRelease>', lambda e: self.validate_region())
         
         # Stats Selection Card
-        stats_card = self.create_card_frame(main_frame, "📊 Configure Target Stats")
+        stats_card = self.create_card_frame(body_frame, "📊 Configure Target Stats")
         
         # Stat 1 Configuration
         stat1_frame = ctk.CTkFrame(stats_card, fg_color="transparent")
@@ -366,17 +370,21 @@ class ConfigUI:
                                 anchor='w')
         info_text.pack(anchor="w", fill="x")
         
+        # Sticky footer for Start Button (always visible)
+        footer_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
+        footer_frame.pack(fill="x", padx=25, pady=(0, 25))
+
         # Start Button - Large and prominent
-        self.start_btn = ctk.CTkButton(main_frame, 
-                                     text="🚀 START AUTOMATION", 
-                                     command=self.start,
-                                     fg_color="#238636",
-                                     hover_color="#2ea043",
-                                     corner_radius=10,
-                                     height=50,
-                                     font=("Segoe UI", 14, "bold"),
-                                     state="disabled")
-        self.start_btn.pack(pady=(20, 0), fill="x")
+        self.start_btn = ctk.CTkButton(footer_frame,
+                         text="🚀 START AUTOMATION",
+                         command=self.start,
+                         fg_color="#238636",
+                         hover_color="#2ea043",
+                         corner_radius=10,
+                         height=50,
+                         font=("Segoe UI", 14, "bold"),
+                         state="disabled")
+        self.start_btn.pack(fill="x")
     
     def apply_initial_values(self):
         """Apply initial values if provided (for reconfiguration)"""
@@ -858,21 +866,22 @@ def capture_and_check():
     status_window.log(f"OCR: {text.strip()[:80]}..." if len(text.strip()) > 80 else f"OCR: {text.strip()}")
     print("\nDetected text:", text.strip())
 
-    # Create pattern for the configured stat(s)
-    patterns = []
-    if stat1_name:
-        patterns.append(stat1_name)
-    if stat2_name:
-        patterns.append(stat2_name)
-    
-    if not patterns:
-        return False
-        
-    # Use word boundaries to avoid partial matches (e.g., Speed matching in AttackSpeed)
-    stat_pattern = "|".join([rf"\b{re.escape(s)}\b" for s in patterns])
+    # Build normalized target stats for exact matching by stat label
+    def normalize_stat_name(name):
+        return re.sub(r"[^A-Za-z]", "", name).lower()
 
-    # Regex: match any stat, followed by + or #, then a number (int/decimal), optional %
-    pattern = re.compile(rf"({stat_pattern})[+#](\d+(?:\.\d+)?)(%?)", re.IGNORECASE)
+    target_stats = {}
+    if stat1_name:
+        target_stats[normalize_stat_name(stat1_name)] = stat1_name
+    if stat2_name:
+        target_stats[normalize_stat_name(stat2_name)] = stat2_name
+
+    if not target_stats:
+        return False
+
+    # Regex: capture full OCR label before +/#, then parse number (int/decimal), optional %
+    # Example matches: "Speed+3", "Attack Speed + 2.0", "CriticalChance#0.5%"
+    pattern = re.compile(r"([A-Za-z][A-Za-z ]{0,40}?)\s*[+#]\s*(\d+(?:\.\d+)?)(%?)", re.IGNORECASE)
 
     # Dictionary to store all occurrences of each stat
     stat_occurrences = {}
@@ -883,7 +892,12 @@ def capture_and_check():
     
     # Find all matches
     for m in pattern.finditer(text):
-        stat, num_str, percent = m.groups()
+        detected_label, num_str, percent = m.groups()
+        normalized_detected = normalize_stat_name(detected_label)
+        if normalized_detected not in target_stats:
+            continue
+
+        stat = target_stats[normalized_detected]
         value = float(num_str)
         
         # Avoid duplicates by checking if value already exists
