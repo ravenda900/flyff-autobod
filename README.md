@@ -403,7 +403,7 @@ location = pyautogui.locateCenterOnScreen(image_path, confidence=0.9)
 
 ## 📄 License
 
-This project is provided as-is for personal use with Flyff Universe.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
 
