@@ -1,1 +1,1 @@
-pyinstaller bod-auto.spec
+venv\Scripts\python -m PyInstaller bod-auto.spec
